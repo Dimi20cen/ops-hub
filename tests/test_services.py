@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import Mock, patch
 
 import httpx
+from requests import HTTPError
 
 
 BASE_DIR = Path(__file__).resolve().parents[1]
@@ -302,6 +303,82 @@ class OpsHubApiTests(unittest.TestCase):
         self.assertEqual(payload["execution_mode"], "local")
         self.assertIsNone(payload["exit_code"])
         self.assertIn("/definitely/missing/path", payload["stderr"])
+
+    def test_project_logs_action_uses_runner_run_endpoint_for_socket_hosts(self) -> None:
+        self.request(
+            "POST",
+            "/hosts",
+            json={
+                "slug": "srv",
+                "title": "Server",
+                "transport": "socket",
+                "runner_socket_path": "/tmp/ops-hub.sock",
+            },
+        )
+        self.request(
+            "POST",
+            "/projects",
+            json={
+                "slug": "janus",
+                "title": "Janus",
+                "deployment_host": "srv",
+                "runtime_path": "/srv/stacks/janus",
+                "logs_command": "docker compose logs --tail 100",
+            },
+        )
+
+        with patch(
+            "app.domain.action_service.post_runner_request",
+            return_value={
+                "ok": True,
+                "exit_code": 0,
+                "stdout": "logs\n",
+                "stderr": "",
+                "ran_at": "2026-04-19T06:10:00Z",
+            },
+        ) as post_runner_request_mock:
+            response = self.request("POST", "/projects/janus/actions", json={"action": "logs"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(post_runner_request_mock.call_args.kwargs["path"], "/run")
+
+    def test_project_logs_action_returns_failed_result_when_runner_returns_http_error(self) -> None:
+        self.request(
+            "POST",
+            "/hosts",
+            json={
+                "slug": "desk",
+                "title": "Desk",
+                "transport": "http",
+                "runner_url": "http://runner.local:8051",
+                "token_env_var": "DESK_RUNNER_TOKEN",
+            },
+        )
+        self.request(
+            "POST",
+            "/projects",
+            json={
+                "slug": "sakura",
+                "title": "Sakura",
+                "deployment_host": "desk",
+                "runtime_path": "/srv/stacks/sakura",
+                "logs_command": "docker compose logs --tail 100",
+            },
+        )
+
+        runner_error = HTTPError("404 runner failure")
+        runner_error.response = Mock(text='{"detail":"runner failed"}')
+
+        with patch(
+            "app.domain.action_service.post_runner_request",
+            side_effect=runner_error,
+        ):
+            response = self.request("POST", "/projects/sakura/actions", json={"action": "logs"})
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertFalse(payload["ok"])
+        self.assertIn("runner failed", payload["stderr"])
 
 
 class OpsHubCliTests(unittest.TestCase):

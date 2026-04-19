@@ -1,5 +1,6 @@
 import subprocess
 from datetime import UTC, datetime
+from requests import HTTPError
 
 from app.domain.host_service import get_host
 from app.domain.runner_client import post_runner_request
@@ -167,16 +168,33 @@ def run_project_action_via_host_runner(
     if host_record is None:
         raise ValueError(f"Unknown deployment_host '{project_record.deployment_host}'.")
 
-    runner_response = post_runner_request(
-        host_record=host_record,
-        path="/run-command",
-        payload={
-            "action": action_name,
-            "command": command_value,
-            "cwd": project_record.runtime_path,
-        },
-        timeout_seconds=60,
-    )
+    try:
+        runner_response = post_runner_request(
+            host_record=host_record,
+            path="/run",
+            payload={
+                "action": action_name,
+                "command": command_value,
+                "cwd": project_record.runtime_path,
+            },
+            timeout_seconds=60,
+        )
+    except HTTPError as error:
+        runner_error_body = ""
+        if error.response is not None and error.response.text:
+            runner_error_body = error.response.text
+        return build_action_result(
+            project_record=project_record,
+            action_name=action_name,
+            command_value=command_value,
+            execution_mode=execution_mode,
+            host_slug=host_slug,
+            dry_run=False,
+            ok=False,
+            exit_code=None,
+            stdout="",
+            stderr=runner_error_body or str(error),
+        )
 
     action_result = build_action_result(
         project_record=project_record,
