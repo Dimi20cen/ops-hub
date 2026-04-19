@@ -265,6 +265,19 @@ h3 {
     background: var(--danger-soft);
 }
 
+.detail-status-reason {
+    margin-top: 10px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.entity-list-health-reason {
+    margin-top: 8px;
+    color: var(--text-secondary);
+    font-size: 0.83rem;
+    line-height: 1.35;
+}
+
 .detail-copy {
     margin-top: 12px;
     color: var(--text-secondary);

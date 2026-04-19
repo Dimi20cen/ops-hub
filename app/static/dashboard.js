@@ -20,6 +20,7 @@ const hostJsonEditorElement = document.getElementById("host-json-editor");
 const selectedProjectSlugElement = document.getElementById("selected-project-slug");
 const selectedProjectTitleElement = document.getElementById("selected-project-title");
 const selectedProjectSummaryElement = document.getElementById("selected-project-summary");
+const selectedProjectSummaryReasonElement = document.getElementById("selected-project-summary-reason");
 const selectedProjectDescriptionElement = document.getElementById("selected-project-description");
 const selectedProjectHostElement = document.getElementById("selected-project-host");
 const selectedProjectRuntimePathElement = document.getElementById("selected-project-runtime-path");
@@ -82,6 +83,53 @@ function applyStatusBadge(element, value) {
     const statusClassName = getStatusClassName(value);
     element.textContent = value;
     element.className = `status-badge status-badge-${statusClassName}`;
+}
+
+function getHealthCheckState(projectRecord, checkName) {
+    return projectRecord.last_health_result?.checks?.[checkName] || null;
+}
+
+function describeHealthCheckState(checkName, healthCheckState) {
+    const humanCheckName = checkName === "public" ? "Public" : "Private";
+    if (!healthCheckState) {
+        return `${humanCheckName} check has not run yet.`;
+    }
+    if (healthCheckState.status === "healthy") {
+        return `${humanCheckName} check is healthy.`;
+    }
+    if (healthCheckState.status === "unconfigured") {
+        return `${humanCheckName} check is not configured.`;
+    }
+    if (healthCheckState.status === "down") {
+        const detailText = healthCheckState.detail || "The check failed.";
+        return `${humanCheckName} check is failing: ${detailText}`;
+    }
+    return `${humanCheckName} check is ${healthCheckState.status}.`;
+}
+
+function buildProjectHealthReason(projectRecord) {
+    const summaryValue = projectRecord.last_health_summary || "unknown";
+    const publicCheckState = getHealthCheckState(projectRecord, "public");
+    const privateCheckState = getHealthCheckState(projectRecord, "private");
+    const publicCheckReason = describeHealthCheckState("public", publicCheckState);
+    const privateCheckReason = describeHealthCheckState("private", privateCheckState);
+
+    if (summaryValue === "healthy") {
+        return "Public and private checks are healthy.";
+    }
+    if (summaryValue === "partial") {
+        return `${publicCheckReason} ${privateCheckReason}`;
+    }
+    if (summaryValue === "down") {
+        return `${publicCheckReason} ${privateCheckReason}`;
+    }
+    if (summaryValue === "unconfigured") {
+        return "Public and private health checks are both unconfigured.";
+    }
+    if (summaryValue === "not_checked") {
+        return "No health check has run yet.";
+    }
+    return "Health state is unknown.";
 }
 
 function getHostRunnerHealthStatus(hostRecord) {
@@ -157,6 +205,7 @@ function setSelectedProject(projectRecord) {
     selectedProjectPublicHealthElement.textContent = projectRecord.health_public_url || "not set";
     selectedProjectPrivateHealthElement.textContent = projectRecord.health_private_url || "not set";
     applyStatusBadge(selectedProjectSummaryElement, projectRecord.last_health_summary || "unknown");
+    selectedProjectSummaryReasonElement.textContent = buildProjectHealthReason(projectRecord);
     projectJsonEditorElement.value = renderJson(projectRecord);
     renderDetailViewMode();
 
@@ -228,6 +277,7 @@ function renderProjectList() {
         const metaElement = document.createElement("div");
         const summaryTagElement = document.createElement("span");
         const hostTagElement = document.createElement("span");
+        const healthReasonElement = document.createElement("div");
         entityButtonElement.type = "button";
         entityButtonElement.className = "entity-list-button";
         entityButtonElement.dataset.entityType = "projects";
@@ -239,8 +289,10 @@ function renderProjectList() {
         summaryTagElement.textContent = summaryValue;
         hostTagElement.className = "tag";
         hostTagElement.textContent = projectRecord.deployment_host || "local";
+        healthReasonElement.className = "entity-list-health-reason";
+        healthReasonElement.textContent = buildProjectHealthReason(projectRecord);
         metaElement.append(summaryTagElement, hostTagElement);
-        entityButtonElement.append(titleElement, metaElement);
+        entityButtonElement.append(titleElement, metaElement, healthReasonElement);
         entityButtonElement.addEventListener("click", () => setSelectedProject(projectRecord));
         entityListElement.appendChild(entityButtonElement);
     });
