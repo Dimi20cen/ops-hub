@@ -1,0 +1,22 @@
+services:
+  ops-hub:
+    build: .
+    container_name: ops-hub
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      OPS_HUB_HOST: 0.0.0.0
+      OPS_HUB_PORT: "8011"
+      OPS_HUB_PROJECTS_PATH: /app/runtime/projects.json
+      OPS_HUB_HOSTS_PATH: /app/runtime/hosts.json
+      OPS_HUB_AUTO_HEALTH_CHECK_ENABLED: ${OPS_HUB_AUTO_HEALTH_CHECK_ENABLED:-true}
+      OPS_HUB_AUTO_HEALTH_CHECK_INTERVAL_SECONDS: ${OPS_HUB_AUTO_HEALTH_CHECK_INTERVAL_SECONDS:-300}
+    ports:
+      - "${LAN_BIND_IP:-100.124.230.107}:${LAN_BIND_PORT:-8011}:8011"
+    command: >
+      sh -c "mkdir -p /app/runtime
+      && python -m uvicorn app.main:create_app --factory --host 0.0.0.0 --port 8011"
+    volumes:
+      - ./runtime:/app/runtime
+      - ${OPS_HUB_ACTION_RUNNER_SOCKET_HOST_PATH:-/srv/stacks/hq/runtime/action-runner.sock}:/app/runtime/action-runner.sock

@@ -1,0 +1,46 @@
+[
+  {
+    "slug": "aws",
+    "title": "aws",
+    "transport": "http",
+    "runner_url": "http://100.69.114.39:8051",
+    "runner_socket_path": "",
+    "token_env_var": "HQ_ACTION_RUNNER_TOKEN_AWS",
+    "location": "Lightsail edge host over Tailscale",
+    "notes": "Remote runner reachable over Tailscale.",
+    "updated_at": "2026-03-17T14:00:00Z"
+  },
+  {
+    "slug": "desk",
+    "title": "desk",
+    "transport": "http",
+    "runner_url": "http://100.104.120.10:8051",
+    "runner_socket_path": "",
+    "token_env_var": "HQ_ACTION_RUNNER_TOKEN_DESK",
+    "location": "Personal workstation over Tailscale",
+    "notes": "Remote runner reachable over Tailscale.",
+    "updated_at": "2026-03-17T14:00:00Z"
+  },
+  {
+    "slug": "srv",
+    "title": "srv",
+    "transport": "socket",
+    "runner_url": "",
+    "runner_socket_path": "/app/runtime/action-runner.sock",
+    "token_env_var": "HQ_ACTION_RUNNER_TOKEN",
+    "location": "Server laptop over LAN and Tailscale",
+    "notes": "Uses the shared Docker bind-mounted socket to reach the local runner.",
+    "updated_at": "2026-03-17T14:00:00Z"
+  },
+  {
+    "slug": "vercel",
+    "title": "vercel",
+    "transport": "none",
+    "runner_url": "",
+    "runner_socket_path": "",
+    "token_env_var": "",
+    "location": "Managed platform",
+    "notes": "No host runner. This is for deployment metadata only.",
+    "updated_at": "2026-03-17T14:00:00Z"
+  }
+]

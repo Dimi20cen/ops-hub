@@ -1,0 +1,260 @@
+[
+  {
+    "slug": "hermes",
+    "title": "Hermes",
+    "description": "Shared AI gateway that centralizes inference routing for multiple personal apps instead of reimplementing provider integration in each project.",
+    "visibility": "public",
+    "deployment_host": "srv",
+    "runtime_path": "/srv/stacks/hermes",
+    "health_public_url": "",
+    "health_private_url": "http://100.124.230.107:8010/health",
+    "deploy_command": "/usr/bin/bash /srv/stacks/hermes/bin/deploy.sh",
+    "start_command": "systemctl --user start hermes.service",
+    "restart_command": "systemctl --user restart hermes.service",
+    "stop_command": "systemctl --user stop hermes.service",
+    "logs_command": "journalctl --user -u hermes.service -n 100 --no-pager",
+    "last_health_summary": "down",
+    "last_health_checked_at": "2026-04-19T05:41:40Z",
+    "last_health_result": {
+      "project_slug": "hermes",
+      "summary": "down",
+      "checks": {
+        "public": {
+          "label": "public",
+          "status": "unconfigured",
+          "ok": false,
+          "http_status": null,
+          "detail": "No URL configured.",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": ""
+        },
+        "private": {
+          "label": "private",
+          "status": "down",
+          "ok": false,
+          "http_status": null,
+          "detail": "Runner check failed: [Errno 2] No such file or directory",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": "http://100.124.230.107:8010/health"
+        }
+      },
+      "checked_at": "2026-04-19T05:41:40Z"
+    },
+    "updated_at": "2026-04-18T17:01:40Z"
+  },
+  {
+    "slug": "hq",
+    "title": "HQ",
+    "description": "Private control plane and dashboard for my personal projects, publishing rules, and host-local operations.",
+    "visibility": "public",
+    "deployment_host": "srv",
+    "runtime_path": "/srv/stacks/hq",
+    "health_public_url": "",
+    "health_private_url": "http://127.0.0.1:8000/projects",
+    "deploy_command": "git pull --ff-only && /usr/bin/bash /srv/stacks/hq/bin/deploy.sh",
+    "start_command": "docker compose up -d --build",
+    "restart_command": "docker compose restart",
+    "stop_command": "docker compose down",
+    "logs_command": "docker compose logs --tail 100",
+    "last_health_summary": "down",
+    "last_health_checked_at": "2026-04-19T05:41:40Z",
+    "last_health_result": {
+      "project_slug": "hq",
+      "summary": "down",
+      "checks": {
+        "public": {
+          "label": "public",
+          "status": "unconfigured",
+          "ok": false,
+          "http_status": null,
+          "detail": "No URL configured.",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": ""
+        },
+        "private": {
+          "label": "private",
+          "status": "down",
+          "ok": false,
+          "http_status": null,
+          "detail": "Runner check failed: [Errno 2] No such file or directory",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": "http://127.0.0.1:8000/projects"
+        }
+      },
+      "checked_at": "2026-04-19T05:41:40Z"
+    },
+    "updated_at": "2026-03-17T17:28:48Z"
+  },
+  {
+    "slug": "janus",
+    "title": "Janus",
+    "description": "Shared OAuth gateway for personal apps",
+    "visibility": "public",
+    "deployment_host": "srv",
+    "runtime_path": "/srv/stacks/janus",
+    "health_public_url": "https://auth.dimy.dev/health",
+    "health_private_url": "http://100.124.230.107:8100/health",
+    "deploy_command": "/usr/bin/bash /srv/stacks/janus/bin/deploy.sh",
+    "start_command": "docker compose up -d",
+    "restart_command": "docker compose restart",
+    "stop_command": "docker compose down",
+    "logs_command": "docker compose logs --tail 100",
+    "last_health_summary": "partial",
+    "last_health_checked_at": "2026-04-19T05:41:40Z",
+    "last_health_result": {
+      "project_slug": "janus",
+      "summary": "partial",
+      "checks": {
+        "public": {
+          "label": "public",
+          "status": "healthy",
+          "ok": true,
+          "http_status": 200,
+          "detail": "HTTP 200",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": "https://auth.dimy.dev/health"
+        },
+        "private": {
+          "label": "private",
+          "status": "down",
+          "ok": false,
+          "http_status": null,
+          "detail": "Runner check failed: [Errno 2] No such file or directory",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": "http://100.124.230.107:8100/health"
+        }
+      },
+      "checked_at": "2026-04-19T05:41:40Z"
+    },
+    "updated_at": "2026-03-18T11:38:09Z"
+  },
+  {
+    "slug": "jobby",
+    "title": "Jobby",
+    "description": "Private job application manager with AI generation, Gmail thread linking, and browser-assisted capture workflows.",
+    "visibility": "public",
+    "deployment_host": "srv",
+    "runtime_path": "/srv/stacks/jobby",
+    "health_public_url": "",
+    "health_private_url": "http://100.124.230.107:8001/health",
+    "deploy_command": "git pull --ff-only && /usr/bin/bash /srv/stacks/jobby/bin/deploy.sh",
+    "start_command": "docker compose up -d",
+    "restart_command": "docker compose restart",
+    "stop_command": "docker compose down",
+    "logs_command": "docker compose logs --tail 100",
+    "last_health_summary": "down",
+    "last_health_checked_at": "2026-04-19T05:41:40Z",
+    "last_health_result": {
+      "project_slug": "jobby",
+      "summary": "down",
+      "checks": {
+        "public": {
+          "label": "public",
+          "status": "unconfigured",
+          "ok": false,
+          "http_status": null,
+          "detail": "No URL configured.",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": ""
+        },
+        "private": {
+          "label": "private",
+          "status": "down",
+          "ok": false,
+          "http_status": null,
+          "detail": "Runner check failed: [Errno 2] No such file or directory",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": "http://100.124.230.107:8001/health"
+        }
+      },
+      "checked_at": "2026-04-19T05:41:40Z"
+    },
+    "updated_at": "2026-03-18T11:39:00Z"
+  },
+  {
+    "slug": "rentpredictor",
+    "title": "Rent Predictor",
+    "description": "Swiss rental price prediction app with reproducible ML workflows and a public Streamlit experience.",
+    "visibility": "public",
+    "deployment_host": "aws",
+    "runtime_path": "/home/ubuntu/apps/rentpredictor",
+    "health_public_url": "https://rent-predictor.dimy.dev",
+    "health_private_url": "",
+    "deploy_command": "./scripts/deploy_vps.sh",
+    "start_command": "SKIP_PULL=1 ./scripts/deploy_vps.sh",
+    "restart_command": "SKIP_PULL=1 ./scripts/deploy_vps.sh",
+    "stop_command": "",
+    "logs_command": "docker logs --tail 100 rentpredictor",
+    "last_health_summary": "partial",
+    "last_health_checked_at": "2026-04-19T05:41:40Z",
+    "last_health_result": {
+      "project_slug": "rentpredictor",
+      "summary": "partial",
+      "checks": {
+        "public": {
+          "label": "public",
+          "status": "healthy",
+          "ok": true,
+          "http_status": 200,
+          "detail": "HTTP 200",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": "https://rent-predictor.dimy.dev"
+        },
+        "private": {
+          "label": "private",
+          "status": "unconfigured",
+          "ok": false,
+          "http_status": null,
+          "detail": "No URL configured.",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": ""
+        }
+      },
+      "checked_at": "2026-04-19T05:41:40Z"
+    },
+    "updated_at": "2026-03-18T14:08:00Z"
+  },
+  {
+    "slug": "sakura",
+    "title": "Sakura",
+    "description": "Online Catan experience with a custom UI and API stack, exposed publicly through the VPS edge.",
+    "visibility": "public",
+    "deployment_host": "desk",
+    "runtime_path": "/home/dim/Projects/sakura/deploy",
+    "health_public_url": "https://api-sakura.dimy.dev/heartbeat",
+    "health_private_url": "http://100.104.120.10:8090/heartbeat",
+    "deploy_command": "docker compose --env-file ../.env -f docker-compose.yml pull && docker compose --env-file ../.env -f docker-compose.yml up -d",
+    "start_command": "docker compose --env-file ../.env -f docker-compose.yml up -d",
+    "restart_command": "docker compose --env-file ../.env -f docker-compose.yml restart",
+    "stop_command": "docker compose --env-file ../.env -f docker-compose.yml down",
+    "logs_command": "docker compose --env-file ../.env -f docker-compose.yml logs --tail 100",
+    "last_health_summary": "down",
+    "last_health_checked_at": "2026-04-19T05:41:40Z",
+    "last_health_result": {
+      "project_slug": "sakura",
+      "summary": "down",
+      "checks": {
+        "public": {
+          "label": "public",
+          "status": "down",
+          "ok": false,
+          "http_status": 502,
+          "detail": "HTTP 502",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": "https://api-sakura.dimy.dev/heartbeat"
+        },
+        "private": {
+          "label": "private",
+          "status": "down",
+          "ok": false,
+          "http_status": null,
+          "detail": "Runner check failed: 401 Client Error: Unauthorized for url: http://100.104.120.10:8051/check-url",
+          "checked_at": "2026-04-19T05:41:40Z",
+          "url": "http://100.104.120.10:8090/heartbeat"
+        }
+      },
+      "checked_at": "2026-04-19T05:41:40Z"
+    },
+    "updated_at": "2026-03-17T17:28:38Z"
+  }
+]

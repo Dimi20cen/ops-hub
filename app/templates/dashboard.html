@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>ops-hub dashboard</title>
+    <link rel="stylesheet" href="/static/dashboard.css">
+</head>
+<body>
+    <main class="app-shell" data-view="ops-hub-dashboard">
+        <section class="workspace-grid">
+            <section class="workspace-panel selector-panel" data-region="selector">
+                <div class="selector-toggle" role="tablist" aria-label="Entity type switcher">
+                    <button id="selector-tab-projects" class="selector-tab is-active" type="button" role="tab" aria-selected="true" data-entity-type="projects">
+                        Projects
+                    </button>
+                    <button id="selector-tab-hosts" class="selector-tab" type="button" role="tab" aria-selected="false" data-entity-type="hosts">
+                        Hosts
+                    </button>
+                </div>
+
+                <div id="entity-list" class="entity-list" data-list="entities"></div>
+            </section>
+
+            <section class="workspace-panel detail-panel" data-region="detail">
+                <div id="detail-empty-state" class="empty-state">
+                    Choose either a project or a host from the left. The middle column will show the exact details and controls for that item.
+                </div>
+
+                <div id="project-detail-panel" hidden>
+                    <div class="detail-toggle" role="tablist" aria-label="Detail view mode">
+                        <button id="detail-tab-project-view" class="detail-tab is-active" type="button" aria-selected="true" data-detail-view="details">
+                            Details
+                        </button>
+                        <button id="detail-tab-project-json" class="detail-tab" type="button" aria-selected="false" data-detail-view="json">
+                            JSON
+                        </button>
+                    </div>
+
+                    <div id="project-detail-view">
+                        <div class="detail-header">
+                            <div>
+                                <p id="selected-project-slug" class="kicker">project</p>
+                                <h3 id="selected-project-title">Project title</h3>
+                            </div>
+                            <div id="selected-project-summary" class="status-badge status-badge-muted">unknown</div>
+                        </div>
+
+                        <p id="selected-project-description" class="detail-copy"></p>
+
+                        <dl class="detail-grid">
+                            <div class="detail-row">
+                                <dt>Host</dt>
+                                <dd id="selected-project-host">local</dd>
+                            </div>
+                            <div class="detail-row">
+                                <dt>Runtime path</dt>
+                                <dd id="selected-project-runtime-path">not set</dd>
+                            </div>
+                            <div class="detail-row">
+                                <dt>Public health</dt>
+                                <dd id="selected-project-public-health">not set</dd>
+                            </div>
+                            <div class="detail-row">
+                                <dt>Private health</dt>
+                                <dd id="selected-project-private-health">not set</dd>
+                            </div>
+                        </dl>
+
+                        <div class="detail-actions">
+                            <label class="control-pill detail-control-pill" for="dry-run-toggle" data-control="dry-run">
+                                <span>Dry run</span>
+                                <input id="dry-run-toggle" type="checkbox" checked>
+                            </label>
+                            <button id="health-check-button" class="secondary-button" type="button" data-command="health-check">
+                                Health Check
+                            </button>
+                            <div id="project-actions" class="action-button-row" data-list="project-actions"></div>
+                        </div>
+                    </div>
+
+                    <div id="project-json-view" class="json-editor-view" hidden>
+                        <textarea id="project-json-editor" class="json-editor" spellcheck="false"></textarea>
+                        <div class="edit-actions">
+                            <button id="project-json-save-button" class="secondary-button" type="button">Save JSON</button>
+                            <button id="project-json-reset-button" class="secondary-button" type="button">Reset</button>
+                            <button id="project-delete-button" class="danger-button" type="button">Delete</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="host-detail-panel" hidden>
+                    <div class="detail-toggle" role="tablist" aria-label="Host detail view mode">
+                        <button id="detail-tab-host-view" class="detail-tab is-active" type="button" aria-selected="true" data-detail-view="details">
+                            Details
+                        </button>
+                        <button id="detail-tab-host-json" class="detail-tab" type="button" aria-selected="false" data-detail-view="json">
+                            JSON
+                        </button>
+                    </div>
+
+                    <div id="host-detail-view">
+                        <div class="detail-header">
+                            <div>
+                                <p id="selected-host-slug" class="kicker">host</p>
+                                <h3 id="selected-host-title">Host title</h3>
+                            </div>
+                            <div id="selected-host-transport" class="status-badge status-badge-muted">transport</div>
+                        </div>
+
+                        <p id="selected-host-location" class="detail-copy"></p>
+
+                        <dl class="detail-grid">
+                            <div class="detail-row">
+                                <dt>Runner health</dt>
+                                <dd id="selected-host-runner-health">unknown</dd>
+                            </div>
+                            <div class="detail-row">
+                                <dt>Runner URL</dt>
+                                <dd id="selected-host-runner-url">none</dd>
+                            </div>
+                            <div class="detail-row">
+                                <dt>Socket path</dt>
+                                <dd id="selected-host-socket-path">none</dd>
+                            </div>
+                            <div class="detail-row">
+                                <dt>Token env var</dt>
+                                <dd id="selected-host-token-env-var">none</dd>
+                            </div>
+                            <div class="detail-row">
+                                <dt>Notes</dt>
+                                <dd id="selected-host-notes">none</dd>
+                            </div>
+                        </dl>
+                    </div>
+
+                    <div id="host-json-view" class="json-editor-view" hidden>
+                        <textarea id="host-json-editor" class="json-editor" spellcheck="false"></textarea>
+                        <div class="edit-actions">
+                            <button id="host-json-save-button" class="secondary-button" type="button">Save JSON</button>
+                            <button id="host-json-reset-button" class="secondary-button" type="button">Reset</button>
+                            <button id="host-delete-button" class="danger-button" type="button">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="workspace-panel console-panel" data-region="output">
+                <div id="result-meta" class="console-meta">Nothing yet. Select an entity, run a health check or action, and the result will land here.</div>
+                <pre id="result-payload" class="console-output" data-output="result"></pre>
+            </section>
+        </section>
+    </main>
+
+    <script src="/static/dashboard.js"></script>
+</body>
+</html>
