@@ -278,6 +278,18 @@ h3 {
     line-height: 1.35;
 }
 
+.entity-list-surface-tags,
+.detail-surface-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.tag.is-surface {
+    background: #fffdf9;
+    color: var(--text-primary);
+}
+
 .detail-copy {
     margin-top: 12px;
     color: var(--text-secondary);

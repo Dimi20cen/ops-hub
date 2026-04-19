@@ -54,6 +54,56 @@ class OpsHubApiTests(unittest.TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertIn("Unknown deployment_host", response.json()["detail"])
 
+    def test_create_project_normalizes_unique_project_surfaces(self) -> None:
+        self.request(
+            "POST",
+            "/hosts",
+            json={
+                "slug": "srv",
+                "title": "Server",
+                "transport": "none",
+            },
+        )
+
+        response = self.request(
+            "POST",
+            "/projects",
+            json={
+                "slug": "jobby",
+                "title": "Jobby",
+                "deployment_host": "srv",
+                "project_surfaces": ["source", "private_deploy", "source", " private_deploy "],
+            },
+        )
+
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(payload["project"]["project_surfaces"], ["source", "private_deploy"])
+
+    def test_create_project_rejects_unknown_project_surface(self) -> None:
+        self.request(
+            "POST",
+            "/hosts",
+            json={
+                "slug": "srv",
+                "title": "Server",
+                "transport": "none",
+            },
+        )
+
+        response = self.request(
+            "POST",
+            "/projects",
+            json={
+                "slug": "jobby",
+                "title": "Jobby",
+                "deployment_host": "srv",
+                "project_surfaces": ["made_up_surface"],
+            },
+        )
+
+        self.assertEqual(response.status_code, 422)
+
     def test_health_check_reports_healthy_when_urls_respond(self) -> None:
         self.request(
             "POST",
@@ -125,6 +175,7 @@ class OpsHubApiTests(unittest.TestCase):
         self.assertEqual(janus_project["last_health_summary"], "healthy")
         self.assertTrue(janus_project["last_health_checked_at"])
         self.assertEqual(janus_project["last_health_result"]["summary"], "healthy")
+        self.assertEqual(janus_project["project_surfaces"], [])
 
     def test_create_http_host_requires_token_env_var(self) -> None:
         response = self.request(

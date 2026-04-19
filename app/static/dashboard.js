@@ -24,6 +24,7 @@ const selectedProjectSummaryReasonElement = document.getElementById("selected-pr
 const selectedProjectDescriptionElement = document.getElementById("selected-project-description");
 const selectedProjectHostElement = document.getElementById("selected-project-host");
 const selectedProjectRuntimePathElement = document.getElementById("selected-project-runtime-path");
+const selectedProjectSurfacesElement = document.getElementById("selected-project-surfaces");
 const selectedProjectPublicHealthElement = document.getElementById("selected-project-public-health");
 const selectedProjectPrivateHealthElement = document.getElementById("selected-project-private-health");
 const selectedHostSlugElement = document.getElementById("selected-host-slug");
@@ -83,6 +84,35 @@ function applyStatusBadge(element, value) {
     const statusClassName = getStatusClassName(value);
     element.textContent = value;
     element.className = `status-badge status-badge-${statusClassName}`;
+}
+
+function formatProjectSurfaceLabel(projectSurface) {
+    if (projectSurface === "private_deploy") {
+        return "private deploy";
+    }
+    if (projectSurface === "public_demo") {
+        return "public demo";
+    }
+    if (projectSurface === "public_deploy") {
+        return "public deploy";
+    }
+    return projectSurface.replaceAll("_", " ");
+}
+
+function renderProjectSurfaceTags(containerElement, projectSurfaces) {
+    containerElement.innerHTML = "";
+
+    if (!projectSurfaces.length) {
+        containerElement.textContent = "none";
+        return;
+    }
+
+    projectSurfaces.forEach((projectSurface) => {
+        const projectSurfaceTagElement = document.createElement("span");
+        projectSurfaceTagElement.className = "tag is-surface";
+        projectSurfaceTagElement.textContent = formatProjectSurfaceLabel(projectSurface);
+        containerElement.appendChild(projectSurfaceTagElement);
+    });
 }
 
 function getHealthCheckState(projectRecord, checkName) {
@@ -202,6 +232,8 @@ function setSelectedProject(projectRecord) {
     selectedProjectDescriptionElement.textContent = projectRecord.description || "No description set.";
     selectedProjectHostElement.textContent = projectRecord.deployment_host || "local";
     selectedProjectRuntimePathElement.textContent = projectRecord.runtime_path || "not set";
+    selectedProjectSurfacesElement.className = "detail-surface-tags";
+    renderProjectSurfaceTags(selectedProjectSurfacesElement, projectRecord.project_surfaces || []);
     selectedProjectPublicHealthElement.textContent = projectRecord.health_public_url || "not set";
     selectedProjectPrivateHealthElement.textContent = projectRecord.health_private_url || "not set";
     applyStatusBadge(selectedProjectSummaryElement, projectRecord.last_health_summary || "unknown");
@@ -278,6 +310,7 @@ function renderProjectList() {
         const summaryTagElement = document.createElement("span");
         const hostTagElement = document.createElement("span");
         const healthReasonElement = document.createElement("div");
+        const surfaceTagsElement = document.createElement("div");
         entityButtonElement.type = "button";
         entityButtonElement.className = "entity-list-button";
         entityButtonElement.dataset.entityType = "projects";
@@ -291,8 +324,10 @@ function renderProjectList() {
         hostTagElement.textContent = projectRecord.deployment_host || "local";
         healthReasonElement.className = "entity-list-health-reason";
         healthReasonElement.textContent = buildProjectHealthReason(projectRecord);
+        surfaceTagsElement.className = "entity-list-surface-tags";
+        renderProjectSurfaceTags(surfaceTagsElement, projectRecord.project_surfaces || []);
         metaElement.append(summaryTagElement, hostTagElement);
-        entityButtonElement.append(titleElement, metaElement, healthReasonElement);
+        entityButtonElement.append(titleElement, metaElement, surfaceTagsElement, healthReasonElement);
         entityButtonElement.addEventListener("click", () => setSelectedProject(projectRecord));
         entityListElement.appendChild(entityButtonElement);
     });

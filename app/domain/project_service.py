@@ -43,6 +43,7 @@ def normalize_project_record(
         title=project_title,
         description=project_request.description.strip(),
         visibility=project_request.visibility,
+        project_surfaces=project_request.project_surfaces,
         deployment_host=deployment_host,
         runtime_path=project_request.runtime_path.strip(),
         health_public_url=validate_optional_http_url("health_public_url", project_request.health_public_url),

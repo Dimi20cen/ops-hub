@@ -8,6 +8,8 @@ It does four things:
 - runs health checks
 - triggers project actions: `deploy`, `start`, `restart`, `stop`, `logs`
 
+Projects can also carry lightweight classification metadata through `project_surfaces`, so the dashboard can answer what each project actually is in practice: source-only, privately deployed, publicly deployed, or demoed.
+
 ## Start Here
 
 - `README.md`: entry point for human readers

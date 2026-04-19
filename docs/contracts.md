@@ -91,12 +91,23 @@ It does not own:
 - `last_health_summary`
 - `last_health_checked_at`
 - `last_health_result`
+- `project_surfaces`
 
 It does not promise a live health check on every read.
 
 Live project health runs only when:
 - `POST /projects/{slug}/health-check` is called
 - the automatic health scheduler performs a sweep
+
+## Project Surface Contract
+
+`project_surfaces` is stored project metadata that classifies how a project exists in the world.
+
+Supported values are:
+- `source`
+- `private_deploy`
+- `public_demo`
+- `public_deploy`
 
 ## Host Response Contract
 
