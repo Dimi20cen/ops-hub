@@ -7,6 +7,8 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parents[2]
 DEFAULT_PROJECTS_PATH = BASE_DIR / "runtime" / "projects.json"
 DEFAULT_HOSTS_PATH = BASE_DIR / "runtime" / "hosts.json"
+DEFAULT_PROJECTS_SEED_PATH = BASE_DIR / "runtime" / "projects.seed.json"
+DEFAULT_HOSTS_SEED_PATH = BASE_DIR / "runtime" / "hosts.seed.json"
 
 
 def get_projects_path() -> Path:
@@ -23,10 +25,32 @@ def get_hosts_path() -> Path:
     return DEFAULT_HOSTS_PATH
 
 
+def get_seed_path_for_store(store_path: Path) -> Path | None:
+    if store_path == DEFAULT_PROJECTS_PATH:
+        return DEFAULT_PROJECTS_SEED_PATH
+    if store_path == DEFAULT_HOSTS_PATH:
+        return DEFAULT_HOSTS_SEED_PATH
+
+    if store_path.name == "projects.json":
+        sibling_seed_path = store_path.with_name("projects.seed.json")
+        if sibling_seed_path.exists():
+            return sibling_seed_path
+    if store_path.name == "hosts.json":
+        sibling_seed_path = store_path.with_name("hosts.seed.json")
+        if sibling_seed_path.exists():
+            return sibling_seed_path
+
+    return None
+
+
 def ensure_store_file(store_path: Path) -> Path:
     store_path.parent.mkdir(parents=True, exist_ok=True)
     if not store_path.exists():
-        store_path.write_text("[]\n", encoding="utf-8")
+        seed_path = get_seed_path_for_store(store_path)
+        if seed_path and seed_path.exists():
+            store_path.write_text(seed_path.read_text(encoding="utf-8"), encoding="utf-8")
+        else:
+            store_path.write_text("[]\n", encoding="utf-8")
     return store_path
 
 

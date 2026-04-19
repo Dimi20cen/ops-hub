@@ -423,6 +423,34 @@ class JsonStoreTests(unittest.TestCase):
 
             self.assertEqual(load_store_data(store_path), [{"slug": "existing"}])
 
+    def test_ensure_store_file_bootstraps_projects_from_seed_file(self) -> None:
+        from app.storage.json_store import ensure_store_file, load_store_data
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            runtime_directory = Path(temporary_directory) / "runtime"
+            runtime_directory.mkdir(parents=True, exist_ok=True)
+            seed_path = runtime_directory / "projects.seed.json"
+            store_path = runtime_directory / "projects.json"
+            seed_path.write_text('[{"slug": "seeded-project"}]\n', encoding="utf-8")
+
+            ensure_store_file(store_path)
+
+            self.assertEqual(load_store_data(store_path), [{"slug": "seeded-project"}])
+
+    def test_ensure_store_file_bootstraps_hosts_from_seed_file(self) -> None:
+        from app.storage.json_store import ensure_store_file, load_store_data
+
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            runtime_directory = Path(temporary_directory) / "runtime"
+            runtime_directory.mkdir(parents=True, exist_ok=True)
+            seed_path = runtime_directory / "hosts.seed.json"
+            store_path = runtime_directory / "hosts.json"
+            seed_path.write_text('[{"slug": "seeded-host"}]\n', encoding="utf-8")
+
+            ensure_store_file(store_path)
+
+            self.assertEqual(load_store_data(store_path), [{"slug": "seeded-host"}])
+
 
 class HealthSchedulerTests(unittest.TestCase):
     def tearDown(self) -> None:

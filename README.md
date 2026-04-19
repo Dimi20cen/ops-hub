@@ -69,6 +69,8 @@ Expected files for the stack:
 - `Dockerfile`
 - `runtime/projects.json`
 - `runtime/hosts.json`
+- `runtime/projects.seed.json`
+- `runtime/hosts.seed.json`
 
 The `srv` host runner socket is expected to be mounted from:
 
@@ -81,6 +83,13 @@ Bootstrap from the example env file:
 cp .env.example .env
 chmod +x bin/deploy.sh
 ```
+
+Live runtime files are created from the seed files only when missing:
+
+- `runtime/projects.seed.json` -> `runtime/projects.json`
+- `runtime/hosts.seed.json` -> `runtime/hosts.json`
+
+The live runtime files are intentionally not tracked by Git.
 
 ## CLI
 
